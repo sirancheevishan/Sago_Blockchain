@@ -1,0 +1,10 @@
+To intract with contract
+truffle console --network ganache   
+const inst= await SagoToken.deployed()
+const account = await web3.eth.getAccounts()
+await contract.BuyToken({ value: 1000000000000000000 }); --For payable
+
+
+Debugging
+npm install @ganache/console.log
+import "@ganache/console.log/console.sol";

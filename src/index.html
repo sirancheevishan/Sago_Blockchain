@@ -1,0 +1,624 @@
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/css/bootstrap.min.css">
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.2/js/bootstrap.min.js"></script>
+    <!-- Particle.js library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://threejs.org/examples/js/libs/stats.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7/web3.min.js"
+        integrity="sha512-yAmmVkOXqtDZRaueLdmLwMB67JtaRtjFzQGiAiJKvLiFlDvq4Tzm5R6uLcOMyvPRQlXpYHdYxc5IbiCwuquhUw=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="~/js/site.js"></script>
+
+    <title>Buy sell and transfer Token</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: cursive;
+            background-color: #f5f5f5;
+            background: linear-gradient(90deg, rgb(5 142 163) 0%, rgb(136 203 211) 27%, rgba(0, 212, 255, 1) 100%);
+        }
+
+        .dvBo {
+            margin: 0 auto;
+            max-width: 600px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            text-align: center;
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px;
+            border: none;
+            border-radius: 3px;
+            width: 100%;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #3e8e41;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        /* ---- reset ---- */
+
+        body {
+            margin: 0;
+            font: normal 75% cursive, Helvetica, cursive;
+        }
+
+        canvas {
+            display: block;
+            vertical-align: bottom;
+        }
+
+        /* ---- particles.js container ---- */
+
+        #particles-js {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: url("");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 50% 50%;
+            z-index: -1;
+        }
+
+        /* ---- stats.js ---- */
+
+        .count-particles {
+            background: #000022;
+            position: absolute;
+            top: 48px;
+            left: 0;
+            width: 80px;
+            color: #13e8e9;
+            font-size: 0.8em;
+            text-align: left;
+            text-indent: 4px;
+            line-height: 14px;
+            padding-bottom: 2px;
+            font-family: Helvetica, Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .js-count-particles {
+            font-size: 1.1em;
+        }
+
+        #stats,
+        .count-particles {
+            -webkit-user-select: none;
+        }
+
+        #stats {
+            border-radius: 3px 3px 0 0;
+            overflow: hidden;
+        }
+
+        .count-particles {
+            border-radius: 0 0 3px 3px;
+        }
+
+        .form-control {
+            border: 1px solid #dcdcdc !important;
+        }
+
+        label {
+            float: left;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .nav-link {
+            font-size: 15px;
+        }
+
+        .nav-link .active {
+            font-size: 15px;
+            font-weight: bold;
+            background: #0c66eb;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Particle.js container -->
+
+    <!-- particles.js container -->
+    <div id="particles-js"></div>
+
+
+    <!-- particles.js lib (JavaScript CodePen settings): https://github.com/VincentGarreau/particles.js -->
+
+    <div class="row container" style="PADDING-RIGHT: 0;MARGIN-LEFT: 4%;">
+        <div class="col-md-2" style="align-items: center;justify-content: center;display: flex;">
+            <div class="mt-5 dvBo"
+                style="margin-top:8%;box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);border:1px solid black;">
+                <div class="row mt-1">
+                    <label>SGN Price</label>
+                    <span id="spnSGNPrice">1 ETH</span>
+                </div>
+                <div class="row mt-3">
+                    <label>Total Supply</label>
+                    <span id="spnTotalSuply">10000 SGN</span>
+                </div>
+                <div class="row mt-3">
+                    <label>Current Supply</label>
+                    <span id="CurrentSupply">10000 SGN</span>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="container dvBo mt-5" id="dvBody" style="margin-top:8%;box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
+                <h1>
+                    <img src="https://i.pinimg.com/originals/0f/03/4e/0f034e04a8952131ebcc3d95c8639255.png" style="
+    height: 41px;
+    border: 2px solid #56925e;
+    border-radius: 50%;
+    margin-right: 1%;
+">Sago Token
+                </h1>
+
+                <div class="container dvBo mt-2" style="border: 1px solid #d0c5c5ee;box-shadow: none !important;">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link active" data-id="buy" data-toggle="tab" href="javascript:0">Buy</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-id="sell" data-toggle="tab" href="javascript:0">Sell</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" data-id="transfer" data-toggle="tab" href="javascript:0">Transfer</a>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3">
+                        <div id="buy" class="tab-pane active">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="buyAmount">Amount (ETH)</label>
+                                        <input type="text" class="form-control" id="buyAmount">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="BuyToken()">Buy</button>
+                            <div class="row mt-3" style="display:none;">
+                                <div class="col-md-6">
+                                    <label for="tokenPrice">Token price:</label>
+                                    <label id="tokenPrice">$0.00</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="balance">Total Supply:</label>
+                                    <label id="balance">0</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="sell" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="sellAmount">Token</label>
+                                        <input type="text" class="form-control" id="sellAmount">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="SellToken()">Sell</button>
+                            <div class="row mt-3" style="display:none;">
+                                <div class="col-md-6">
+                                    <label for="tokenPrice">Token price:</label>
+                                    <label id="tokenPrice">$0.00</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="balance">Total Supply:</label>
+                                    <label id="balance">0</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="transfer" class="tab-pane fade">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="toAddress">Token</label>
+                                        <input type="text" class="form-control" id="txtNoToken">
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="toAddress">To</label>
+                                        <input type="text" class="form-control" id="toAddress">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-primary" onclick="TransferToken()">Transfer</button>
+                            <div class="row mt-3" style="display:none;">
+                                <div class="col-md-6">
+                                    <label for="tokenPrice">Token price:</label>
+                                    <label id="tokenPrice">$0.00</label>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="balance">Total Supply:</label>
+                                    <label id="balance">0</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2" style="align-items: center;justify-content: center;display: flex;">
+            <div class="mt-5 dvBo" style="margin-top:8%;box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);">
+                <div class="row mt-1">
+                    <label>Owned Token</label>
+                    <span id="spnToken">1 SGN</span>
+                </div>
+                <div class="row mt-3" style="display:none;">
+                    <label>Total Supply</label>
+                    <span>10,000 SGN</span>
+                </div>
+                <div class="row mt-3">
+                    <label>Total Value</label>
+                    <span id="TotalValue">10000 ETH</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<script src="/SRC/app.js"></script>
+    <script>
+        // let web3;
+        // var ConractAddress = "0xd9145CCE52D386f254917e481eB44e9943F39138";
+        // const fs = require('fs');
+        // var MyTokenABI = GetJson();
+        // $(document).ready(function () {
+        //     debugger
+        //     enableDapp();
+        // });
+        // // Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+        // // for details on configuring this project to bundle and minify static web assets.
+
+        // // Write your JavaScript code.
+        // $(".nav-link").click(function () {
+        //     $(".nav-link,.tab-pane").removeClass("active");
+        //     $(this).addClass("active");
+        //     $(".tab-pane").addClass("fade");
+        //     var id = $(this).data("id");
+        //     $("#" + id).removeClass("fade").addClass("active");
+        // });
+        // /* ---- particles.js config ---- */
+
+        // particlesJS("particles-js", {
+        //     particles: {
+        //         number: {
+        //             value: 380,
+        //             density: {
+        //                 enable: true,
+        //                 value_area: 800
+        //             }
+        //         },
+        //         color: {
+        //             value: "#ffffff"
+        //         },
+        //         shape: {
+        //             type: "circle",
+        //             stroke: {
+        //                 width: 0,
+        //                 color: "#000000"
+        //             },
+        //             polygon: {
+        //                 nb_sides: 5
+        //             },
+        //             image: {
+        //                 src: "img/github.svg",
+        //                 width: 100,
+        //                 height: 100
+        //             }
+        //         },
+        //         opacity: {
+        //             value: 0.5,
+        //             random: false,
+        //             anim: {
+        //                 enable: false,
+        //                 speed: 1,
+        //                 opacity_min: 0.1,
+        //                 sync: false
+        //             }
+        //         },
+        //         size: {
+        //             value: 3,
+        //             random: true,
+        //             anim: {
+        //                 enable: false,
+        //                 speed: 40,
+        //                 size_min: 0.1,
+        //                 sync: false
+        //             }
+        //         },
+        //         line_linked: {
+        //             enable: true,
+        //             distance: 150,
+        //             color: "#ffffff",
+        //             opacity: 0.4,
+        //             width: 1
+        //         },
+        //         move: {
+        //             enable: true,
+        //             speed: 6,
+        //             direction: "none",
+        //             random: false,
+        //             straight: false,
+        //             out_mode: "out",
+        //             bounce: false,
+        //             attract: {
+        //                 enable: false,
+        //                 rotateX: 600,
+        //                 rotateY: 1200
+        //             }
+        //         }
+        //     },
+        //     interactivity: {
+        //         detect_on: "canvas",
+        //         events: {
+        //             onhover: {
+        //                 enable: true,
+        //                 mode: "grab"
+        //             },
+        //             onclick: {
+        //                 enable: true,
+        //                 mode: "push"
+        //             },
+        //             resize: true
+        //         },
+        //         modes: {
+        //             grab: {
+        //                 distance: 140,
+        //                 line_linked: {
+        //                     opacity: 1
+        //                 }
+        //             },
+        //             bubble: {
+        //                 distance: 400,
+        //                 size: 40,
+        //                 duration: 2,
+        //                 opacity: 8,
+        //                 speed: 3
+        //             },
+        //             repulse: {
+        //                 distance: 200,
+        //                 duration: 0.4
+        //             },
+        //             push: {
+        //                 particles_nb: 4
+        //             },
+        //             remove: {
+        //                 particles_nb: 2
+        //             }
+        //         }
+        //     },
+        //     retina_detect: true
+        // });
+
+        // /* ---- stats.js config ---- */
+
+        // var count_particles, stats, update;
+        // stats = new Stats();
+        // stats.setMode(0);
+        // stats.domElement.style.position = "absolute";
+        // stats.domElement.style.left = "0px";
+        // stats.domElement.style.top = "0px";
+        // document.body.appendChild(stats.domElement);
+        // count_particles = document.querySelector(".js-count-particles");
+        // update = function () {
+        //     stats.begin();
+        //     stats.end();
+        //     if (window.pJSDom[0].pJS.particles && window.pJSDom[0].pJS.particles.array) {
+        //         count_particles.innerText = window.pJSDom[0].pJS.particles.array.length;
+        //     }
+        //     requestAnimationFrame(update);
+        // };
+        // requestAnimationFrame(update);
+
+        // var Address = "";
+        // async function enableDapp() {
+
+        //     if (typeof window.ethereum !== 'undefined') {
+        //         try {
+        //             accounts = await ethereum.request({
+        //                 method: 'eth_requestAccounts'
+        //             });
+        //             web3 = new Web3(window.ethereum);
+        //             Address = accounts[0];
+        //             var abi = MyTokenABI.abi;
+        //             var contractInstance = new web3.eth.Contract(abi, ConractAddress);
+        //             contractInstance.methods.EmitDetails()
+        //                 .send({ from: Address })
+        //                 .then((receipt) => {
+        //                     bindData(receipt.events.GetDetails);
+        //                 })
+        //                 .catch((error) => {
+        //                     console.error('Transaction error:', error);
+        //                 });
+        //         } catch (error) {
+        //             if (error.code === 4001) {
+        //                 // EIP-1193 userRejectedRequest error
+        //                 statusText.innerHTML = "Error: Need permission to access MetaMAsk";
+        //                 console.log('Permissions needed to continue.');
+        //             } else {
+        //                 console.error(error.message);
+        //             }
+        //         }
+        //     } else {
+        //         alert("Error: Need to install MetaMask");
+        //     }
+        // };
+
+
+        // async function BuyToken() {
+        //     var abi = MyTokenABI.abi;
+        //     var contractInstance = new web3.eth.Contract(abi, ConractAddress);
+        //     if ($("#buyAmount").val() == "") {
+        //         AlertFunction('Please enter the no of ehter', 'error');
+        //         return false;
+        //     }
+        //     debugger
+
+        //     const amount = $("#buyAmount").val() * 1000000000000000000;
+        //     contractInstance.methods.BuyToken().send({
+        //         from: Address,
+        //         value: amount
+        //     })
+        //         .then((receipt) => {
+        //             debugger
+        //             console.log('Transaction receipt:', receipt);
+        //             if (receipt.status) {
+        //                 AlertFunction('You have purchased SGN suucessfully', 'success');
+        //                 bindData(receipt.events.GetDetails);
+        //             } else {
+        //                 AlertFunction('unable to buy the token', 'error');
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             console.error('Transaction error:', error);
+        //         });
+        // }
+
+
+        // async function SellToken() {
+        //     debugger
+        //     var abi = MyTokenABI.abi;
+        //     var contractInstance = new web3.eth.Contract(abi, ConractAddress);
+        //     if ($("#sellAmount").val() == "") {
+        //         AlertFunction('Please enter the no of token', 'error');
+        //         return false;
+        //     }
+        //     contractInstance.methods.SellToken($("#sellAmount").val())
+        //         .send({ from: Address })
+        //         .then((receipt) => {
+        //             if (receipt.status) {
+        //                 AlertFunction('You have successfully sold your token', 'success');
+        //                 bindData(receipt.events.GetDetails);
+        //             } else {
+        //                 AlertFunction('unable to buy the token', 'error');
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             console.error('Transaction error:', error);
+        //         });
+
+        // }
+
+        // async function TransferToken() {
+        //     debugger
+        //     var abi = MyTokenABI.abi;
+        //     var contractInstance = new web3.eth.Contract(abi, ConractAddress);
+        //     if ($("#txtNoToken").val() == "" || $("#txtNoToken").val() == "") {
+        //         AlertFunction('Please enter the no of token', 'error');
+        //         return false;
+        //     }
+        //     contractInstance.methods.TranferToken($("#toAddress").val(), $("#txtNoToken").val())
+        //         .send({ from: Address })
+        //         .then((receipt) => {
+        //             if (receipt.status) {
+        //                 AlertFunction('Token transfered successfully to this account - ' + $("#txtNoToken").val(), 'success');
+        //                 bindData(receipt.events.GetDetails);
+
+        //             } else {
+        //                 AlertFunction('unable to buy the token', 'error');
+        //             }
+        //         })
+        //         .catch((error) => {
+        //             console.error('Transaction error:', error);
+        //         });
+
+        // }
+
+        // var GetAbiJson = () => {
+        //     $.ajax({
+        //         url: '/Files/abi.json',
+        //         dataType: 'json',
+        //         success: function (data) {
+        //             console.log(data);
+        //         },
+        //         error: function (jqXHR, textStatus, errorThrown) {
+        //             console.log(textStatus, errorThrown);
+        //         }
+        //     });
+
+        // }
+
+        // function AlertFunction(message, type) {
+        //     Swal.fire({
+
+        //         icon: type,
+        //         title: type,
+        //         text: message
+        //     });
+        // }
+
+        // function bindData(data) {
+        //     $("#CurrentSupply").html(data.returnValues.CurrentSupply + " SGN");
+        //     $("#spnToken").html(data.returnValues.TotalUserTOken + " SGN");
+        //     $("#spnSGNPrice").html(web3.utils.fromWei(data.returnValues.SGNPrice, 'ether') + " ETH");
+        //     $("#spnTotalSuply").html(data.returnValues.TotalSupply + " SGN");
+        //     $("#TotalValue").html(data.returnValues.TotalPrice + " ETH");
+        // }
+        // function GetJson() {
+        //     fs.readFile('http://localhost:3000//build/contracts/SagoToken.json', 'utf8', (err, data) => {
+        //         if (err) {
+        //             console.error('Error reading JSON file:', err);
+        //             return;
+        //         }
+
+        //         const jsonData = JSON.parse(data);
+        //         // Process the JSON data
+        //         console.log(jsonData);
+        //         return jsonData;
+        //     });
+
+        //     // return fetch('http://localhost:3000//build/contracts/SagoToken.json')
+        //     //     .then(response => response.json())
+        //     //     .then(data => {
+        //     //         // Process the JSON data
+        //     //         return data;
+        //     //     })
+        //     //     .catch(error => {
+        //     //         // Handle any errors
+        //     //         console.error('Error:', error);
+        //     //     });
+        // }
+    </script>
+</body>
+
+</html>
